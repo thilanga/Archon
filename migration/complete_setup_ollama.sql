@@ -71,9 +71,9 @@ INSERT INTO archon_settings (key, value, is_encrypted, category, description) VA
 ('MCP_TRANSPORT', 'dual', false, 'server_config', 'MCP server transport mode - sse (web clients), stdio (IDE clients), or dual (both)'),
 ('HOST', 'localhost', false, 'server_config', 'Host to bind to if using sse as the transport (leave empty if using stdio)'),
 ('PORT', '8051', false, 'server_config', 'Port to listen on if using sse as the transport (leave empty if using stdio)'),
-('MODEL_CHOICE', 'gpt-4.1-nano', false, 'rag_strategy', 'The LLM you want to use for summaries and contextual embeddings. Generally this is a very cheap and fast LLM like gpt-4.1-nano');
+('MODEL_CHOICE', 'llama3.2', false, 'rag_strategy', 'The LLM you want to use for summaries and contextual embeddings. Generally this is a local Ollama model like llama3.2');
 
--- RAG Strategy Configuration (all default to true)
+-- RAG Strategy Configuration
 INSERT INTO archon_settings (key, value, is_encrypted, category, description) VALUES
 ('USE_CONTEXTUAL_EMBEDDINGS', 'false', false, 'rag_strategy', 'Enhances embeddings with contextual information for better retrieval'),
 ('CONTEXTUAL_EMBEDDINGS_MAX_WORKERS', '3', false, 'rag_strategy', 'Maximum parallel workers for contextual embedding generation (1-10)'),
@@ -195,7 +195,7 @@ CREATE TABLE IF NOT EXISTS archon_crawled_pages (
     content TEXT NOT NULL,
     metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
     source_id TEXT NOT NULL,
-    embedding VECTOR(768),  -- OpenAI embeddings are 1536 dimensions
+    embedding VECTOR(768),  -- Ollama nomic-embed-text: 768 dimensions
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
 
     -- Add a unique constraint to prevent duplicate chunks for the same URL
@@ -219,7 +219,7 @@ CREATE TABLE IF NOT EXISTS archon_code_examples (
     summary TEXT NOT NULL,  -- Summary of the code example
     metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
     source_id TEXT NOT NULL,
-    embedding VECTOR(768),  -- OpenAI embeddings are 1536 dimensions
+    embedding VECTOR(768),  -- Ollama nomic-embed-text: 768 dimensions
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
 
     -- Add a unique constraint to prevent duplicate chunks for the same URL
@@ -789,7 +789,13 @@ Remember: Create production-ready data models.', 'System prompt for creating dat
 -- Your Archon database is now fully configured!
 --
 -- Next steps:
--- 1. Add your OpenAI API key via the Settings UI
--- 2. Enable Projects feature if needed
--- 3. Start crawling websites or uploading documents
+-- 1. Start Ollama server: ollama serve
+-- 2. Pull models: ollama pull llama3.2 && ollama pull nomic-embed-text  
+-- 3. Configure Ollama provider in Settings UI
+-- 4. Enable Projects feature if needed
+-- 5. Start crawling websites or uploading documents
+--
+-- IMPORTANT: This setup targets Ollama/nomic-embed-text (768 dims). 
+-- Use complete_setup.sql for OpenAI (1536 dims); do not mix providers 
+-- within the same database.
 -- =====================================================

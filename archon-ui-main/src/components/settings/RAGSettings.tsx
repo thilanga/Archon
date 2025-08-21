@@ -67,7 +67,7 @@ export const RAGSettings = ({
               options={[
                 { value: 'openai', label: 'OpenAI' },
                 { value: 'google', label: 'Google Gemini' },
-                { value: 'ollama', label: 'Ollama (Coming Soon)' },
+                { value: 'ollama', label: 'Ollama (Local)' },
               ]}
             />
           </div>

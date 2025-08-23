@@ -33,5 +33,8 @@ ARG ARCHON_MCP_PORT=8051
 ENV ARCHON_MCP_PORT=${ARCHON_MCP_PORT}
 EXPOSE ${ARCHON_MCP_PORT}
 
-# Run the MCP server
-CMD ["python", "-m", "src.mcp_server.mcp_server"]
+# Install aiohttp for the health proxy
+RUN pip install --no-cache-dir aiohttp
+
+# Run the health proxy which starts MCP internally
+CMD ["python", "-m", "src.mcp_server.health_proxy"]

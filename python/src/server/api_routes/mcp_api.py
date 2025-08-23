@@ -68,7 +68,7 @@ class MCPServerManager:
             return None
         
         try:
-            # Simple: Just look for the fixed container name
+            # Simple: Just look for the fixed container name (case-sensitive)
             container = self.docker_client.containers.get("archon-mcp")
             self.container_name = "archon-mcp"
             mcp_logger.info("Found MCP container")
